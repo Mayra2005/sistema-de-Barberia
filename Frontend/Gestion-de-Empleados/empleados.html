@@ -17,18 +17,42 @@
 <section class="active">
     <h2>Gestión de Empleados</h2>
 
-    <label>Nombre</label>
-    <input type="text" id="emp_nombre">
+    <!-- nombre TEXT — solo letras y espacios, máx 50 -->
+    <label>Nombre <span style="color:#e74c3c">*</span></label>
+    <input type="text" id="emp_nombre"
+           maxlength="50"
+           required
+           pattern="[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+"
+           title="Solo se permiten letras y espacios"
+           placeholder="Nombre(s) del empleado">
 
+    <!-- salario — campo extra, no en BD directamente, lo ignoramos en POST -->
     <label>Salario</label>
-    <input type="text" id="emp_salario">
+    <input type="number" id="emp_salario"
+           min="0" max="999999"
+           step="0.01"
+           placeholder="Ej. 5000.00">
 
-    <label>Usuario</label>
-    <input type="text" id="emp_usuario">
+    <!-- usuario TEXT NOT NULL UNIQUE — máx 50, sin espacios -->
+    <label>Usuario <span style="color:#e74c3c">*</span></label>
+    <input type="text" id="emp_usuario"
+           maxlength="50"
+           required
+           pattern="[A-Za-z0-9_\-]+"
+           title="Solo letras, números, guion y guion bajo. Sin espacios."
+           placeholder="usuario_unico"
+           oninput="verificarUsuarioDisponible(this.value)">
+    <small id="usuario_feedback" style="display:block; margin-top:2px; font-size:12px;"></small>
 
-    <label>Contraseña</label>
-    <input type="password" id="emp_contrasena">
+    <!-- contrasena TEXT NOT NULL — máx 100 -->
+    <label>Contraseña <span style="color:#e74c3c">*</span></label>
+    <input type="password" id="emp_contrasena"
+           maxlength="100"
+           required
+           minlength="4"
+           placeholder="Mínimo 4 caracteres">
 
+    <!-- rol TEXT -->
     <label>Rol</label>
     <select id="emp_rol">
         <option value="Barbero">Barbero</option>

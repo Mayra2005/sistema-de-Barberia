@@ -17,22 +17,36 @@
 <section class="active">
     <h2>Agendar Cita</h2>
 
-    <label>Nombre del Cliente</label>
-    <input type="text" id="cita_cliente_nombre" placeholder="Ej. Juan Pérez">
+    <!-- nombre TEXT — solo letras y espacios, máx 100 -->
+    <label>Nombre del Cliente <span style="color:#e74c3c">*</span></label>
+    <input type="text" id="cita_cliente_nombre"
+           maxlength="100"
+           required
+           pattern="[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+"
+           title="Solo se permiten letras y espacios"
+           placeholder="Ej. Juan Pérez">
 
+    <!-- telefono TEXT — solo dígitos, máx 15 -->
     <label>Teléfono del Cliente</label>
-    <input type="text" id="cita_cliente_telefono" placeholder="Ej. 555-1234">
+    <input type="tel" id="cita_cliente_telefono"
+           maxlength="15"
+           pattern="[0-9\-\+\s]+"
+           title="Solo números, guiones y espacios"
+           placeholder="Ej. 555-1234">
 
-    <label>Barbero</label>
-    <select id="cita_empleado">
+    <!-- idEmpleados INTEGER NOT NULL (seleccionado en select) -->
+    <label>Barbero <span style="color:#e74c3c">*</span></label>
+    <select id="cita_empleado" required>
         <option value="">Cargando barberos...</option>
     </select>
 
-    <label>Fecha</label>
-    <input type="date" id="cita_fecha">
+    <!-- fecha TEXT NOT NULL -->
+    <label>Fecha <span style="color:#e74c3c">*</span></label>
+    <input type="date" id="cita_fecha" required>
 
-    <label>Hora</label>
-    <input type="time" id="cita_hora">
+    <!-- hora TEXT NOT NULL -->
+    <label>Hora <span style="color:#e74c3c">*</span></label>
+    <input type="time" id="cita_hora" required>
 
     <div class="actions">
         <button onclick="guardarCita()">Registrar</button>

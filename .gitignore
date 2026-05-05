@@ -1,0 +1,21 @@
+# Dependencias de Node.js — cada quien instala con: npm install
+BACKEND/node_modules/
+
+# Base de datos SQLite — se crea automáticamente al iniciar el servidor
+BACKEND/database.sqlite
+
+# Archivos de entorno y secretos
+.env
+*.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

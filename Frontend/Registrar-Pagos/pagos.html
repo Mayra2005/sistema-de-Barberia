@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Pagos</title>
+    <title>Registrar Pago</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body onload="cargarMenu()">
@@ -15,22 +15,32 @@
 <nav id="menu"></nav>
 
 <section class="active">
-    <h2>Gestionar Pagos</h2>
+    <h2>Registrar Pago</h2>
 
-    <label>Cliente</label>
-    <input type="text">
-
-    <label>Servicio</label>
-    <select>
-        <option>Corte</option>
-        <option>Corte + Barba</option>
+    <!-- idCitas INTEGER NOT NULL — select dinámico -->
+    <label>Cita <span style="color:#e74c3c">*</span></label>
+    <select id="pago_cita_select" required>
+        <option value="">Cargando citas...</option>
     </select>
 
-    <label>Monto</label>
-    <input type="text">
+    <!-- monto REAL NOT NULL — número positivo con decimales -->
+    <label>Monto ($) <span style="color:#e74c3c">*</span></label>
+    <input type="number" id="pago_monto"
+           min="0.01" max="99999.99"
+           step="0.01"
+           required
+           placeholder="Ej. 120.00">
+
+    <!-- metodo_pago TEXT -->
+    <label>Método de Pago</label>
+    <select id="pago_metodo">
+        <option value="Efectivo">Efectivo</option>
+        <option value="Tarjeta">Tarjeta</option>
+        <option value="Transferencia">Transferencia</option>
+    </select>
 
     <div class="actions">
-        <button onclick="alert('Pago registrado')">Registrar Pago</button>
+        <button onclick="guardarPago()">Registrar Pago</button>
     </div>
 </section>
 <script src="../js/script.js"></script>

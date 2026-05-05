@@ -17,16 +17,28 @@
 <section class="active">
     <h2>Gestionar Pagos</h2>
 
-    <label>ID Cita</label>
-    <input type="text" id="pago_cita">
+    <!-- idCitas INTEGER NOT NULL -->
+    <label>ID Cita <span style="color:#e74c3c">*</span></label>
+    <input type="number" id="pago_cita"
+           min="1" max="9999999"
+           step="1"
+           required
+           placeholder="Número de ID de la cita">
 
-    <label>Monto</label>
-    <input type="text" id="pago_monto">
+    <!-- monto REAL NOT NULL -->
+    <label>Monto ($) <span style="color:#e74c3c">*</span></label>
+    <input type="number" id="pago_monto"
+           min="0.01" max="99999.99"
+           step="0.01"
+           required
+           placeholder="Ej. 120.00">
 
+    <!-- metodo_pago TEXT -->
     <label>Método de Pago</label>
     <select id="pago_metodo">
         <option value="Efectivo">Efectivo</option>
         <option value="Tarjeta">Tarjeta</option>
+        <option value="Transferencia">Transferencia</option>
     </select>
 
     <div class="actions">

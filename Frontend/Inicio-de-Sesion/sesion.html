@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../js/script.js"></script>
 </head>
 <body>
 
@@ -14,12 +13,22 @@
 
 <section class="active">
     <label>Usuario</label>
-<input type="text" id="usuario">
+    <!-- usuario TEXT NOT NULL — solo letras, números y guion bajo, máx 50 -->
+    <input type="text" id="usuario"
+           maxlength="50"
+           required
+           autocomplete="username"
+           placeholder="Tu usuario">
 
-<label>Contraseña</label>
-<input type="password" id="password">
+    <label>Contraseña</label>
+    <!-- contrasena TEXT NOT NULL — máx 100 -->
+    <input type="password" id="password"
+           maxlength="100"
+           required
+           autocomplete="current-password"
+           placeholder="Tu contraseña">
 
-<button onclick="login()">Iniciar Sesión</button>
+    <button onclick="login()">Iniciar Sesión</button>
 </section>
 
 <script src="../js/script.js"></script>

@@ -17,17 +17,20 @@
 <section class="active">
     <h2>Seleccionar Estilo y Promociones</h2>
 
-    <label>Cita Pendiente</label>
-    <select id="estilo_cita">
+    <!-- idCitas INTEGER — selección requerida -->
+    <label>Cita Pendiente <span style="color:#e74c3c">*</span></label>
+    <select id="estilo_cita" required>
         <option value="">Cargando citas...</option>
     </select>
 
-    <label>Estilo Aplicado</label>
-    <select id="estilo_estilo">
+    <!-- idEstilos INTEGER — selección requerida -->
+    <label>Estilo Aplicado <span style="color:#e74c3c">*</span></label>
+    <select id="estilo_estilo" required>
         <option value="">Cargando estilos...</option>
     </select>
 
-    <label>Promoción Aplicada (Opcional)</label>
+    <!-- idPromociones INTEGER — opcional -->
+    <label>Promoción Aplicada <small style="color:#aaa">(opcional)</small></label>
     <select id="estilo_promocion">
         <option value="">Ninguna / Cargando...</option>
     </select>

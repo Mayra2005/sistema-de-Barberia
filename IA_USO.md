@@ -29,7 +29,7 @@ La utilizamos con los siguientes objetivos:
 - Implementar seguridad mediante JSON Web Tokens (JWT) para distinguir roles (Dueño, Barbero).
 - Generar las consultas SQL asíncronas para el CRUD de clientes, empleados, citas, pagos y promociones.
 
-**Base de Datos (MySQL):**
+**Base de Datos (SQLITE):**
 - Optimizar y normalizar los scripts de creación de tablas (`EMPLEADOS.SQL`, `CITAS.SQL`, etc.).
 - Asegurar el uso de llaves foráneas para mantener la integridad de los datos.
 
@@ -48,7 +48,7 @@ El uso de la inteligencia artificial se realizó bajo los siguientes principios:
 El uso de IA permitió:
 - Reducir drásticamente el tiempo de desarrollo.
 - Mejorar el diseño visual y la arquitectura técnica del sistema.
-- Facilitar el aprendizaje del stack completo (HTML, CSS, JS, Node.js, MySQL).
+- Facilitar el aprendizaje del stack completo (HTML, CSS, JS, Node.js, SQLITE).
 - Detectar, corregir errores y refactorizar el proyecto para un estado profesional.
 
 La IA fue utilizada únicamente como apoyo, elevando la calidad del trabajo del equipo.

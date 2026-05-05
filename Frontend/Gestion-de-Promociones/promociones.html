@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Promociones</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body onload="cargarMenu()">
 
@@ -18,15 +18,15 @@
     <h2>Gestionar Promociones</h2>
 
     <label>Nombre promoción</label>
-    <input type="text">
+    <input type="text" id="prom_nombre">
 
     <label>Descuento</label>
-    <input type="text">
+    <input type="text" id="prom_descuento">
 
     <div class="actions">
-        <button onclick="alert('Promoción guardada')">Guardar</button>
+        <button onclick="guardarPromocion()">Guardar</button>
     </div>
 </section>
-<script src="script.js"></script>
+<script src="../js/script.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Pagos</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body onload="cargarMenu()">
 
@@ -17,22 +17,22 @@
 <section class="active">
     <h2>Gestionar Pagos</h2>
 
-    <label>Cliente</label>
-    <input type="text">
-
-    <label>Servicio</label>
-    <select>
-        <option>Corte</option>
-        <option>Corte + Barba</option>
-    </select>
+    <label>ID Cita</label>
+    <input type="text" id="pago_cita">
 
     <label>Monto</label>
-    <input type="text">
+    <input type="text" id="pago_monto">
+
+    <label>Método de Pago</label>
+    <select id="pago_metodo">
+        <option value="Efectivo">Efectivo</option>
+        <option value="Tarjeta">Tarjeta</option>
+    </select>
 
     <div class="actions">
-        <button onclick="alert('Pago registrado')">Registrar Pago</button>
+        <button onclick="guardarPago()">Registrar Pago</button>
     </div>
 </section>
-<script src="script.js"></script>
+<script src="../js/script.js"></script>
 </body>
 </html>

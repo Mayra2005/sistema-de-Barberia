@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Modificar Cita</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body onload="cargarMenu()">
 
@@ -17,15 +17,21 @@
 <section class="active">
     <h2>Modificar o Cancelar Cita</h2>
 
-    <select>
-        <option></option>
+    <select id="lista_citas">
+        <option value="">Cargando citas...</option>
     </select>
 
+    <label style="margin-top: 20px;">Nueva Fecha (Solo para modificar)</label>
+    <input type="date" id="mod_fecha">
+
+    <label>Nueva Hora</label>
+    <input type="time" id="mod_hora">
+
     <div class="actions">
-        <button onclick="alert('Cita modificada')">Modificar</button>
-        <button onclick="alert('Cita cancelada')">Cancelar</button>
+        <button onclick="modificarCita()">Modificar</button>
+        <button onclick="cancelarCita()">Cancelar</button>
     </div>
 </section>
-<script src="script.js"></script>
+<script src="../js/script.js"></script>
 </body>
 </html>

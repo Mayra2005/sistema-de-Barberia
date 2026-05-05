@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Citas</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body onload="cargarMenu()">
 
@@ -17,33 +17,27 @@
 <section class="active">
     <h2>Agendar Cita</h2>
 
-    <label>Cliente</label>
-    <input type="text">
+    <label>Nombre del Cliente</label>
+    <input type="text" id="cita_cliente_nombre" placeholder="Ej. Juan Pérez">
 
-    <label>Teléfono</label>
-    <input type="text">
-
-    <label>Servicio</label>
-    <select>
-        <option>Corte</option>
-        <option>Corte + Barba</option>
-    </select>
+    <label>Teléfono del Cliente</label>
+    <input type="text" id="cita_cliente_telefono" placeholder="Ej. 555-1234">
 
     <label>Barbero</label>
-    <select>
-        <option></option>
+    <select id="cita_empleado">
+        <option value="">Cargando barberos...</option>
     </select>
 
     <label>Fecha</label>
-    <input type="date">
+    <input type="date" id="cita_fecha">
 
     <label>Hora</label>
-    <input type="time">
+    <input type="time" id="cita_hora">
 
     <div class="actions">
-        <button onclick="alert('Cita registrada')">Registrar</button>
+        <button onclick="guardarCita()">Registrar</button>
     </div>
 </section>
-<script src="script.js"></script>
+<script src="../js/script.js"></script>
 </body>
 </html>

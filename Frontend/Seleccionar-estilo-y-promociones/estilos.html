@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Estilos</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Asignar Estilos</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body onload="cargarMenu()">
 
@@ -15,19 +15,27 @@
 <nav id="menu"></nav>
 
 <section class="active">
-    <h2>Seleccionar Estilo</h2>
+    <h2>Seleccionar Estilo y Promociones</h2>
 
-    <select>
-        <option disabled selected>Selecciona un estilo</option>
-        <option>Fade</option>
-        <option>Clásico</option>
-        <option>Low Fade</option>
+    <label>Cita Pendiente</label>
+    <select id="estilo_cita">
+        <option value="">Cargando citas...</option>
+    </select>
+
+    <label>Estilo Aplicado</label>
+    <select id="estilo_estilo">
+        <option value="">Cargando estilos...</option>
+    </select>
+
+    <label>Promoción Aplicada (Opcional)</label>
+    <select id="estilo_promocion">
+        <option value="">Ninguna / Cargando...</option>
     </select>
 
     <div class="actions">
-        <button onclick="alert('Estilo guardado')">Guardar</button>
+        <button onclick="asignarEstiloPromocion()">Guardar Cambios</button>
     </div>
 </section>
-<script src="script.js"></script>
+<script src="../js/script.js"></script>
 </body>
 </html>

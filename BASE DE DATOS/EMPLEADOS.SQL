@@ -9,5 +9,6 @@ CREATE TABLE Empleados (
     especialidad VARCHAR(50),
     usuario VARCHAR(50) NOT NULL UNIQUE,
     contrasena VARCHAR(50) NOT NULL,
+    rol VARCHAR(20) DEFAULT 'Barbero',
     PRIMARY KEY (idEmpleados)
 );

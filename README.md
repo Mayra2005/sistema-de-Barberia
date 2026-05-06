@@ -16,7 +16,8 @@ El sistema propuesto permitirá automatizar la gestión de citas, empleados, pro
 El sistema será de uso interno y únicamente interactuarán con él el dueño y los barberos, cada uno con permisos específicos según su rol. Esto permitirá un mejor control administrativo, reducción de errores humanos y una administración más moderna y eficiente del negocio.
 
 
-Tecnologías
+Tecnologías Utilizadas
+
 Frontend: HTML, CSS, JavaScript (Vanilla) |
 Backend: Node.js + Express 
 Base de datos: SQLite 

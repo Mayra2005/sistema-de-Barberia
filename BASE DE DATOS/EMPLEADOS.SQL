@@ -12,3 +12,4 @@ CREATE TABLE Empleados (
     rol VARCHAR(20) DEFAULT 'Barbero',
     PRIMARY KEY (idEmpleados)
 );
+

@@ -1,4 +1,4 @@
-# Barbería Super Bee — Sistema de Gestión
+# Barbería Super Bee 
 
 **Proyecto de Ingeniería de Software**
 

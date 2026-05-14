@@ -7,3 +7,4 @@ CREATE TABLE Pagos (
     PRIMARY KEY (idPagos),
     FOREIGN KEY (idCitas) REFERENCES Citas(idCitas)
 );
+

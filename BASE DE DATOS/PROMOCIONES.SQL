@@ -7,3 +7,5 @@ CREATE TABLE Promociones (
     fecha_fin DATE,
     PRIMARY KEY (idPromociones)
 );
+
+

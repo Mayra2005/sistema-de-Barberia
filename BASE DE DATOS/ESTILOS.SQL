@@ -7,3 +7,4 @@ CREATE TABLE Estilos (
     PRIMARY KEY (idEstilos),
     FOREIGN KEY (idPromociones) REFERENCES Promociones(idPromociones)
 );
+

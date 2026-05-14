@@ -38,7 +38,8 @@ async function initTables(db) {
             especialidad TEXT,
             usuario TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL,
-            rol TEXT DEFAULT 'Barbero'
+            rol TEXT DEFAULT 'Barbero',
+            salario REAL DEFAULT 0
         );
 
         CREATE TABLE IF NOT EXISTS Clientes (
@@ -65,13 +66,12 @@ async function initTables(db) {
             fecha TEXT,
             hora TEXT,
             estado TEXT,
+            idPromociones INTEGER,
             FOREIGN KEY (idEstilos) REFERENCES Estilos(idEstilos),
             FOREIGN KEY (idClientes) REFERENCES Clientes(idClientes),
-            FOREIGN KEY (idEmpleados) REFERENCES Empleados(idEmpleados)
+            FOREIGN KEY (idEmpleados) REFERENCES Empleados(idEmpleados),
+            FOREIGN KEY (idPromociones) REFERENCES Promociones(idPromociones)
         );
-
-        -- Añadir columna idPromociones si no existe
-        ALTER TABLE Citas ADD COLUMN idPromociones INTEGER REFERENCES Promociones(idPromociones);
     `).catch(() => { /* Ignorar error si la columna ya existe */ });
 
     await db.exec(`

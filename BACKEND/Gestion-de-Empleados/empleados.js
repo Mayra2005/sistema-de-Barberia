@@ -9,7 +9,7 @@ router.get('/', verificarToken, async (req, res) => {
     try {
         const db = await connectDB();
         const rows = await db.all(
-            "SELECT idEmpleados, nombre, paterno, materno, telefono, horario, estado, especialidad, usuario, rol FROM Empleados"
+            "SELECT idEmpleados, nombre, paterno, materno, telefono, horario, estado, especialidad, usuario, rol, salario FROM Empleados"
         );
         res.json(rows);
     } catch (error) {
@@ -43,7 +43,7 @@ router.post('/', verificarToken, soloDueño, async (req, res) => {
         const db = await connectDB();
         const {
             nombre, paterno, materno, telefono, horario,
-            estado, especialidad, usuario, contrasena, rol
+            estado, especialidad, usuario, contrasena, rol, salario
         } = req.body;
 
         // ── Validaciones server-side ────────────────────────────────────────────
@@ -87,7 +87,7 @@ router.post('/', verificarToken, soloDueño, async (req, res) => {
         }
 
         await db.run(
-            "INSERT INTO Empleados (nombre, paterno, materno, telefono, horario, estado, especialidad, usuario, contrasena, rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO Empleados (nombre, paterno, materno, telefono, horario, estado, especialidad, usuario, contrasena, rol, salario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
                 nombre.trim(),
                 (paterno || '').trim(),
@@ -98,7 +98,8 @@ router.post('/', verificarToken, soloDueño, async (req, res) => {
                 especialidad || 'General',
                 usuario.trim(),
                 contrasena,
-                rol || 'Barbero'
+                rol || 'Barbero',
+                parseFloat(salario) || 0
             ]
         );
         res.json({ success: true, mensaje: "Empleado creado exitosamente" });
@@ -141,6 +142,30 @@ router.put('/:id/estado', verificarToken, soloDueño, async (req, res) => {
         res.json({ success: true, mensaje: "Estado actualizado" });
     } catch (error) {
         res.status(500).json({ error: "Error al actualizar estado" });
+    }
+});
+
+// ─── PUT: Editar empleado ─────────────────────────────────────────────────────
+router.put('/:id', verificarToken, soloDueño, async (req, res) => {
+    try {
+        const db = await connectDB();
+        const id = parseInt(req.params.id);
+        const { nombre, usuario, rol, salario } = req.body;
+
+        if (isNaN(id)) return res.status(400).json({ error: "ID inválido" });
+        if (!nombre || nombre.trim() === '') return res.status(400).json({ error: "El nombre es requerido" });
+        if (!usuario || usuario.trim() === '') return res.status(400).json({ error: "El usuario es requerido" });
+
+        await db.run(
+            "UPDATE Empleados SET nombre = ?, usuario = ?, rol = ?, salario = ? WHERE idEmpleados = ?",
+            [nombre.trim(), usuario.trim(), rol, parseFloat(salario) || 0, id]
+        );
+        res.json({ success: true, mensaje: "Empleado actualizado" });
+    } catch (error) {
+        if (error.message && error.message.includes('UNIQUE constraint failed')) {
+            return res.status(409).json({ error: "El nombre de usuario ya está registrado." });
+        }
+        res.status(500).json({ error: "Error al actualizar empleado" });
     }
 });
 

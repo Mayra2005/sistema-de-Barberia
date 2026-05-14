@@ -74,7 +74,7 @@ function cargarMenu() {
     // 🔴 MENÚ DUEÑO
     if (rol === "Dueño") {
         menu.innerHTML += `<a href="../Gestion-de-Empleados/empleados.html">Gestión de empleados</a>`;
-        menu.innerHTML += `<a href="../Gestion-de-Promociones/promociones.html">Gestión de promociones</a>`;
+        menu.innerHTML += `<a href="../Gestion-de-Promociones/promociones.html">Gestión de promociones y estilos</a>`;
         menu.innerHTML += `<a href="../Gestion-de-Pagos/pagos.html">Gestionar pagos</a>`;
         menu.innerHTML += `<a href="../Copia-de-Seguridad/seguridad.html">Copia de seguridad</a>`;
     }
@@ -280,7 +280,8 @@ async function guardarEmpleado() {
         especialidad: 'General',
         usuario: usuario.trim(),
         contrasena,
-        rol
+        rol,
+        salario: parseFloat(document.getElementById("emp_salario")?.value) || 0
     });
 
     if (res && res.ok) {
@@ -303,29 +304,39 @@ async function guardarEmpleado() {
 }
 
 async function guardarPromocion() {
-    const nombre    = document.getElementById("prom_nombre")?.value ?? '';
-    const descuento = document.getElementById("prom_descuento")?.value ?? '';
+    const nombre      = document.getElementById("promo_nombre")?.value ?? '';
+    const descripcion = document.getElementById("promo_descripcion")?.value ?? '';
+    const descuento   = document.getElementById("promo_descuento")?.value ?? '';
+    const inicio      = document.getElementById("promo_inicio")?.value ?? '';
+    const fin         = document.getElementById("promo_fin")?.value ?? '';
 
-    limpiarErrores(['prom_nombre', 'prom_descuento']);
+    limpiarErrores(['promo_nombre', 'promo_descuento', 'promo_inicio', 'promo_fin']);
 
     const errNombre = validarCampo(nombre, { requerido: true, maxLen: 80, regex: REGEX.nombreProm, regexMsg: "Solo letras, números, espacios y guiones" });
-    if (errNombre) { mostrarError('prom_nombre', errNombre); return; }
+    if (errNombre) { mostrarError('promo_nombre', errNombre); return; }
 
     const errDesc = validarCampo(descuento, { requerido: true, tipo: 'numero', min: 0.01, max: 100 });
-    if (errDesc) { mostrarError('prom_descuento', errDesc); return; }
+    if (errDesc) { mostrarError('promo_descuento', errDesc); return; }
+
+    if (!inicio) { mostrarError('promo_inicio', "La fecha de inicio es requerida"); return; }
+    if (!fin) { mostrarError('promo_fin', "La fecha de fin es requerida"); return; }
 
     const res = await fetchAPI('/promociones', 'POST', {
         nombre: nombre.trim(),
-        descripcion: 'Sin descripción',
+        descripcion: descripcion.trim() || 'Sin descripción',
         descuento: parseFloat(descuento),
-        fecha_inicio: new Date().toISOString().split('T')[0],
-        fecha_fin: new Date().toISOString().split('T')[0]
+        fecha_inicio: inicio,
+        fecha_fin: fin
     });
 
     if (res && res.ok) {
         alert("✅ Promoción guardada exitosamente");
-        document.getElementById("prom_nombre").value = "";
-        document.getElementById("prom_descuento").value = "";
+        document.getElementById("promo_nombre").value = "";
+        document.getElementById("promo_descripcion").value = "";
+        document.getElementById("promo_descuento").value = "";
+        document.getElementById("promo_inicio").value = "";
+        document.getElementById("promo_fin").value = "";
+        cargarTablaPromociones();
     } else {
         alert("❌ " + (res?.data?.error || "Error al guardar promoción"));
     }
@@ -358,6 +369,7 @@ async function guardarPago() {
     if (res && res.ok) {
         alert("✅ Pago registrado exitosamente");
         cargarCitasSelectPago();
+        cargarTablaPagos();
         if (document.getElementById("pago_monto")) document.getElementById("pago_monto").value = "";
         if (document.getElementById("pago_cita")) document.getElementById("pago_cita").value = "";
     } else {
@@ -471,6 +483,24 @@ async function cargarCitasSelectPago() {
         res.data.forEach(cita => {
             select.innerHTML += `<option value="${cita.idCitas}">#${cita.idCitas} - ${cita.fecha} ${cita.hora} - ${cita.nombreCliente || 'Cliente'}</option>`;
         });
+        _todasLasCitas = res.data; // Para poder acceder a ellas al calcular total
+    }
+}
+
+function alSeleccionarCitaParaPago() {
+    const idCita = document.getElementById("pago_cita_select")?.value;
+    const inputMonto = document.getElementById("pago_monto");
+    if (!idCita || !inputMonto) return;
+    
+    const cita = _todasLasCitas.find(c => c.idCitas == idCita);
+    if (cita) {
+        let precio = parseFloat(cita.precioEstilo || 0);
+        if (precio === 0) return; // Si no hay estilo con precio, dejar vacío
+        let descuento = cita.descuentoPromocion ? parseFloat(cita.descuentoPromocion) : 0;
+        let total = precio - (precio * (descuento / 100));
+        inputMonto.value = total.toFixed(2);
+    } else {
+        inputMonto.value = '';
     }
 }
 
@@ -579,14 +609,16 @@ async function cargarEmpleadosTabla() {
             const botonEstado = esActivo
                 ? `<button style="background:red; padding:5px 10px; font-size:12px;" onclick="cambiarEstadoEmpleado(${emp.idEmpleados}, 'Inactivo')">Inactivar</button>`
                 : `<button style="background:green; padding:5px 10px; font-size:12px;" onclick="cambiarEstadoEmpleado(${emp.idEmpleados}, 'Activo')">Activar</button>`;
+            const botonEditar = `<button style="background:#3498db; padding:5px 10px; font-size:12px; margin-right:5px;" onclick="abrirModalEditarEmpleado(${emp.idEmpleados}, '${emp.nombre.replace(/'/g, "\\'")}', '${emp.usuario}', '${emp.rol}', ${emp.salario || 0})">Editar</button>`;
 
             tbody.innerHTML += `
                 <tr>
                     <td style="padding: 10px; border: 1px solid #555;">${emp.nombre}</td>
                     <td style="padding: 10px; border: 1px solid #555;">${emp.rol}</td>
                     <td style="padding: 10px; border: 1px solid #555;">${emp.usuario || '-'}</td>
+                    <td style="padding: 10px; border: 1px solid #555; color: #4caf50;">$${parseFloat(emp.salario || 0).toFixed(2)}</td>
                     <td style="padding: 10px; border: 1px solid #555; font-weight: bold; color: ${esActivo ? '#4caf50' : '#f44336'};">${estadoReal}</td>
-                    <td style="padding: 10px; border: 1px solid #555; text-align: center;">${botonEstado}</td>
+                    <td style="padding: 10px; border: 1px solid #555; text-align: center;">${botonEditar}${botonEstado}</td>
                 </tr>
             `;
         });
@@ -681,6 +713,306 @@ function limpiarFiltro() {
 }
 
 // ==============================
+// TABLA DE PAGOS
+// ==============================
+async function cargarTablaPagos() {
+    const tbody = document.getElementById('tabla_pagos_body');
+    if (!tbody) return; // Solo ejecutar en la página correcta
+
+    tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#aaa; border:1px solid #555;">Cargando...</td></tr>`;
+
+    const res = await fetchAPI('/pagos');
+    if (!res || !res.ok) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#e74c3c; border:1px solid #555;">❌ Error al cargar los pagos</td></tr>`;
+        return;
+    }
+
+    const pagos = res.data || [];
+    if (pagos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#aaa; border:1px solid #555;">No hay pagos registrados</td></tr>`;
+        return;
+    }
+
+    const rol = localStorage.getItem("rol");
+    tbody.innerHTML = pagos.map(pago => {
+        const btnEliminar = rol === "Dueño" ? `<button style="background:red; padding:5px 10px; font-size:12px; margin-left:5px;" onclick="eliminarPago(${pago.idPagos})">Eliminar</button>` : '';
+        return `
+            <tr>
+                <td style="padding: 10px; border: 1px solid #555;">#${pago.idPagos}</td>
+                <td style="padding: 10px; border: 1px solid #555;">${pago.idCitas}</td>
+                <td style="padding: 10px; border: 1px solid #555; color: #4caf50; font-weight: bold;">$${parseFloat(pago.monto).toFixed(2)}</td>
+                <td style="padding: 10px; border: 1px solid #555;">${pago.metodo_pago || 'Efectivo'}</td>
+                <td style="padding: 10px; border: 1px solid #555;">${pago.fecha || '—'}</td>
+                <td style="padding: 10px; border: 1px solid #555; text-align:center;">
+                    <button style="background:#3498db; padding:5px 10px; font-size:12px;" onclick="abrirModalEditarPago(${pago.idPagos}, ${pago.monto}, '${pago.metodo_pago}', '${pago.fecha}')">Editar</button>
+                    ${btnEliminar}
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// ==============================
+// FUNCIONES CRUD EXTRAS (PAGOS, PROMOCIONES)
+// ==============================
+
+// --- EMPLEADOS ---
+function abrirModalEditarEmpleado(id, nombre, usuario, rol, salario) {
+    document.getElementById('edit_emp_id').value = id;
+    document.getElementById('edit_emp_id_display').innerText = id;
+    document.getElementById('edit_emp_nombre').value = nombre;
+    document.getElementById('edit_emp_usuario').value = usuario;
+    document.getElementById('edit_emp_rol').value = rol;
+    document.getElementById('edit_emp_salario').value = salario;
+    document.getElementById('modalEditarEmpleado').style.display = 'flex';
+}
+
+async function actualizarEmpleado() {
+    const id = document.getElementById('edit_emp_id').value;
+    const nombre = document.getElementById('edit_emp_nombre').value;
+    const usuario = document.getElementById('edit_emp_usuario').value;
+    const rol = document.getElementById('edit_emp_rol').value;
+    const salario = document.getElementById('edit_emp_salario').value;
+
+    if (!nombre) return alert('Nombre requerido');
+    if (!usuario) return alert('Usuario requerido');
+    
+    const res = await fetchAPI(`/empleados/${id}`, 'PUT', { nombre, usuario, rol, salario });
+    if (res && res.ok) {
+        alert("✅ Empleado actualizado");
+        document.getElementById('modalEditarEmpleado').style.display = 'none';
+        cargarEmpleadosTabla();
+    } else {
+        alert("❌ Error: " + (res?.data?.error || ""));
+    }
+}
+
+// --- PAGOS ---
+function abrirModalEditarPago(id, monto, metodo, fecha) {
+    document.getElementById('edit_pago_id').value = id;
+    document.getElementById('edit_pago_id_display').innerText = id;
+    document.getElementById('edit_pago_monto').value = monto;
+    document.getElementById('edit_pago_metodo').value = metodo || 'Efectivo';
+    document.getElementById('edit_pago_fecha').value = fecha;
+    document.getElementById('modalEditarPago').style.display = 'flex';
+}
+
+async function actualizarPago() {
+    const id = document.getElementById('edit_pago_id').value;
+    const monto = document.getElementById('edit_pago_monto').value;
+    const metodo = document.getElementById('edit_pago_metodo').value;
+    const fecha = document.getElementById('edit_pago_fecha').value;
+
+    if (!monto || parseFloat(monto) <= 0) return alert('Monto inválido');
+
+    const res = await fetchAPI(`/pagos/${id}`, 'PUT', { monto: parseFloat(monto), metodo_pago: metodo, fecha });
+    if (res && res.ok) {
+        alert("✅ Pago actualizado");
+        document.getElementById('modalEditarPago').style.display = 'none';
+        cargarTablaPagos();
+    } else {
+        alert("❌ Error al actualizar pago: " + (res?.data?.error || ""));
+    }
+}
+
+async function eliminarPago(id) {
+    if (!confirm('¿Seguro que deseas eliminar este pago?')) return;
+    const res = await fetchAPI(`/pagos/${id}`, 'DELETE');
+    if (res && res.ok) {
+        alert("✅ Pago eliminado");
+        cargarTablaPagos();
+    } else {
+        alert("❌ Error al eliminar pago: " + (res?.data?.error || ""));
+    }
+}
+
+// --- PROMOCIONES ---
+async function cargarTablaPromociones() {
+    const tbody = document.getElementById('tabla_promociones_body');
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#aaa; border:1px solid #555;">Cargando...</td></tr>`;
+
+    const res = await fetchAPI('/promociones');
+    if (!res || !res.ok) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#e74c3c; border:1px solid #555;">❌ Error al cargar las promociones</td></tr>`;
+        return;
+    }
+
+    const promociones = res.data || [];
+    if (promociones.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#aaa; border:1px solid #555;">No hay promociones registradas</td></tr>`;
+        return;
+    }
+
+    const rol = localStorage.getItem("rol");
+    tbody.innerHTML = promociones.map(prom => {
+        const btnEliminar = rol === "Dueño" ? `<button style="background:red; padding:5px 10px; font-size:12px; margin-left:5px;" onclick="eliminarPromocion(${prom.idPromociones})">Eliminar</button>` : '';
+        const btnEditar = rol === "Dueño" ? `<button style="background:#3498db; padding:5px 10px; font-size:12px;" onclick="abrirModalEditarPromocion(${prom.idPromociones}, '${prom.nombre.replace(/'/g, "\\'")}', '${(prom.descripcion||'').replace(/'/g, "\\'")}', ${prom.descuento}, '${prom.fecha_inicio}', '${prom.fecha_fin}')">Editar</button>` : '';
+        
+        return `
+            <tr>
+                <td style="padding: 10px; border: 1px solid #555;">#${prom.idPromociones}</td>
+                <td style="padding: 10px; border: 1px solid #555;">${prom.nombre}</td>
+                <td style="padding: 10px; border: 1px solid #555; color: #3498db; font-weight: bold;">-${prom.descuento}%</td>
+                <td style="padding: 10px; border: 1px solid #555; font-size:13px;">${prom.fecha_inicio} a ${prom.fecha_fin}</td>
+                <td style="padding: 10px; border: 1px solid #555; text-align:center;">
+                    ${btnEditar}
+                    ${btnEliminar}
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function abrirModalEditarPromocion(id, nombre, descripcion, descuento, fInicio, fFin) {
+    document.getElementById('edit_promo_id').value = id;
+    document.getElementById('edit_promo_id_display').innerText = id;
+    document.getElementById('edit_promo_nombre').value = nombre;
+    document.getElementById('edit_promo_descripcion').value = descripcion;
+    document.getElementById('edit_promo_descuento').value = descuento;
+    document.getElementById('edit_promo_inicio').value = fInicio;
+    document.getElementById('edit_promo_fin').value = fFin;
+    document.getElementById('modalEditarPromocion').style.display = 'flex';
+}
+
+async function actualizarPromocion() {
+    const id = document.getElementById('edit_promo_id').value;
+    const nombre = document.getElementById('edit_promo_nombre').value;
+    const descripcion = document.getElementById('edit_promo_descripcion').value;
+    const descuento = document.getElementById('edit_promo_descuento').value;
+    const fInicio = document.getElementById('edit_promo_inicio').value;
+    const fFin = document.getElementById('edit_promo_fin').value;
+
+    if (!nombre) return alert('Nombre requerido');
+    
+    const res = await fetchAPI(`/promociones/${id}`, 'PUT', { nombre, descripcion: descripcion || 'Sin descripción', descuento: parseFloat(descuento), fecha_inicio: fInicio, fecha_fin: fFin });
+    if (res && res.ok) {
+        alert("✅ Promoción actualizada");
+        document.getElementById('modalEditarPromocion').style.display = 'none';
+        cargarTablaPromociones();
+    } else {
+        alert("❌ Error al actualizar promoción: " + (res?.data?.error || ""));
+    }
+}
+
+async function eliminarPromocion(id) {
+    if (!confirm('¿Seguro que deseas eliminar esta promoción permanentemente?')) return;
+    const res = await fetchAPI(`/promociones/${id}`, 'DELETE');
+    if (res && res.ok) {
+        alert("✅ Promoción eliminada");
+        cargarTablaPromociones();
+    } else {
+        alert("❌ Error al eliminar promoción: " + (res?.data?.error || ""));
+    }
+}
+
+// ==============================
+// --- ESTILOS CRUD ---
+// ==============================
+
+async function guardarEstilo() {
+    const nombre = document.getElementById("estilo_nombre")?.value;
+    const descripcion = document.getElementById("estilo_descripcion")?.value;
+    const precio = document.getElementById("estilo_precio")?.value;
+
+    if (!nombre || nombre.trim() === '') return alert('El nombre es obligatorio');
+    if (!precio || parseFloat(precio) <= 0) return alert('El precio es obligatorio y debe ser mayor a 0');
+
+    const res = await fetchAPI('/estilos', 'POST', {
+        nombre: nombre.trim(),
+        descripcion: descripcion ? descripcion.trim() : 'Sin descripción',
+        precio: parseFloat(precio)
+    });
+
+    if (res && res.ok) {
+        alert("✅ Estilo guardado exitosamente");
+        document.getElementById("estilo_nombre").value = "";
+        document.getElementById("estilo_descripcion").value = "";
+        document.getElementById("estilo_precio").value = "";
+        cargarTablaEstilos();
+    } else {
+        alert("❌ Error al guardar estilo: " + (res?.data?.error || ""));
+    }
+}
+
+async function cargarTablaEstilos() {
+    const tbody = document.getElementById('tabla_estilos_body');
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#aaa; border:1px solid #555;">Cargando...</td></tr>`;
+
+    const res = await fetchAPI('/estilos');
+    if (!res || !res.ok) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#e74c3c; border:1px solid #555;">❌ Error al cargar los estilos</td></tr>`;
+        return;
+    }
+
+    const estilos = res.data || [];
+    if (estilos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#aaa; border:1px solid #555;">No hay estilos registrados</td></tr>`;
+        return;
+    }
+
+    const rol = localStorage.getItem("rol");
+    tbody.innerHTML = estilos.map(est => {
+        const btnEliminar = rol === "Dueño" ? `<button style="background:red; padding:5px 10px; font-size:12px; margin-left:5px;" onclick="eliminarEstilo(${est.idEstilos})">Eliminar</button>` : '';
+        const btnEditar = rol === "Dueño" ? `<button style="background:#3498db; padding:5px 10px; font-size:12px;" onclick="abrirModalEditarEstilo(${est.idEstilos}, '${(est.nombre || '').replace(/'/g, "\\'")}', '${(est.descripcion || '').replace(/'/g, "\\'")}', ${est.precio})">Editar</button>` : '';
+        
+        return `
+            <tr>
+                <td style="padding: 10px; border: 1px solid #555;">#${est.idEstilos}</td>
+                <td style="padding: 10px; border: 1px solid #555;">${est.nombre}</td>
+                <td style="padding: 10px; border: 1px solid #555;">${est.descripcion}</td>
+                <td style="padding: 10px; border: 1px solid #555; color: #4caf50; font-weight: bold;">$${parseFloat(est.precio).toFixed(2)}</td>
+                <td style="padding: 10px; border: 1px solid #555; text-align:center;">
+                    ${btnEditar}
+                    ${btnEliminar}
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function abrirModalEditarEstilo(id, nombre, descripcion, precio) {
+    document.getElementById('edit_estilo_id').value = id;
+    document.getElementById('edit_estilo_id_display').innerText = id;
+    document.getElementById('edit_estilo_nombre').value = nombre;
+    document.getElementById('edit_estilo_descripcion').value = descripcion;
+    document.getElementById('edit_estilo_precio').value = precio;
+    document.getElementById('modalEditarEstilo').style.display = 'flex';
+}
+
+async function actualizarEstilo() {
+    const id = document.getElementById('edit_estilo_id').value;
+    const nombre = document.getElementById('edit_estilo_nombre').value;
+    const descripcion = document.getElementById('edit_estilo_descripcion').value;
+    const precio = document.getElementById('edit_estilo_precio').value;
+
+    if (!nombre) return alert('Nombre requerido');
+    
+    const res = await fetchAPI(`/estilos/${id}`, 'PUT', { nombre, descripcion, precio: parseFloat(precio) });
+    if (res && res.ok) {
+        alert("✅ Estilo actualizado");
+        document.getElementById('modalEditarEstilo').style.display = 'none';
+        cargarTablaEstilos();
+    } else {
+        alert("❌ Error al actualizar estilo: " + (res?.data?.error || ""));
+    }
+}
+
+async function eliminarEstilo(id) {
+    if (!confirm('¿Seguro que deseas eliminar este estilo permanentemente?')) return;
+    const res = await fetchAPI(`/estilos/${id}`, 'DELETE');
+    if (res && res.ok) {
+        alert("✅ Estilo eliminado");
+        cargarTablaEstilos();
+    } else {
+        alert("❌ Error al eliminar estilo: " + (res?.data?.error || ""));
+    }
+}
+
+// ==============================
 // INICIALIZACIÓN AL CARGAR PÁGINA
 // ==============================
 window.addEventListener('DOMContentLoaded', () => {
@@ -690,4 +1022,7 @@ window.addEventListener('DOMContentLoaded', () => {
     cargarEmpleadosTabla();
     cargarEstilosYPromocionesSelect();
     cargarTablaCitas();
+    cargarTablaPagos();
+    if (typeof cargarTablaPromociones === 'function') cargarTablaPromociones();
+    if (typeof cargarTablaEstilos === 'function') cargarTablaEstilos();
 });

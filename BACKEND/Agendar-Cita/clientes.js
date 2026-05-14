@@ -27,4 +27,30 @@ router.post('/', verificarToken, async (req, res) => {
     }
 });
 
+router.put('/:id', verificarToken, async (req, res) => {
+    try {
+        const db = await connectDB();
+        const { id } = req.params;
+        const { nombre, paterno, materno, telefono, correo } = req.body;
+        await db.run(
+            "UPDATE Clientes SET nombre = ?, paterno = ?, materno = ?, telefono = ?, correo = ? WHERE idClientes = ?",
+            [nombre, paterno, materno, telefono, correo, id]
+        );
+        res.json({ success: true, mensaje: "Cliente actualizado" });
+    } catch (error) {
+        res.status(500).json({ error: "Error al actualizar cliente" });
+    }
+});
+
+router.delete('/:id', verificarToken, async (req, res) => {
+    try {
+        const db = await connectDB();
+        const { id } = req.params;
+        await db.run("DELETE FROM Clientes WHERE idClientes = ?", [id]);
+        res.json({ success: true, mensaje: "Cliente eliminado" });
+    } catch (error) {
+        res.status(500).json({ error: "Error al eliminar cliente" });
+    }
+});
+
 module.exports = router;

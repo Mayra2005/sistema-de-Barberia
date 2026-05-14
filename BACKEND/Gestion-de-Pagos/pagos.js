@@ -43,4 +43,37 @@ router.post('/', verificarToken, async (req, res) => {
     }
 });
 
+router.put('/:id', verificarToken, async (req, res) => {
+    try {
+        const db = await connectDB();
+        const { id } = req.params;
+        const { monto, metodo_pago, fecha } = req.body;
+
+        if (!monto || isNaN(parseFloat(monto))) {
+            return res.status(400).json({ error: "El monto debe ser un número válido" });
+        }
+
+        await db.run(
+            "UPDATE Pagos SET monto = ?, metodo_pago = ?, fecha = ? WHERE idPagos = ?",
+            [parseFloat(monto), metodo_pago, fecha, id]
+        );
+        res.json({ success: true, mensaje: "Pago actualizado" });
+    } catch (error) {
+        console.error("Error al actualizar pago:", error);
+        res.status(500).json({ error: "Error al actualizar pago" });
+    }
+});
+
+router.delete('/:id', verificarToken, soloDueño, async (req, res) => {
+    try {
+        const db = await connectDB();
+        const { id } = req.params;
+        await db.run("DELETE FROM Pagos WHERE idPagos = ?", [id]);
+        res.json({ success: true, mensaje: "Pago eliminado" });
+    } catch (error) {
+        console.error("Error al eliminar pago:", error);
+        res.status(500).json({ error: "Error al eliminar pago" });
+    }
+});
+
 module.exports = router;

@@ -7,10 +7,13 @@ router.get('/', verificarToken, async (req, res) => {
     try {
         const db = await connectDB();
         const rows = await db.all(`
-            SELECT Citas.*, Clientes.nombre as nombreCliente, Empleados.nombre as nombreEmpleado 
+            SELECT Citas.*, Clientes.nombre as nombreCliente, Empleados.nombre as nombreEmpleado,
+            Estilos.precio as precioEstilo, Promociones.descuento as descuentoPromocion
             FROM Citas 
             LEFT JOIN Clientes ON Citas.idClientes = Clientes.idClientes
             LEFT JOIN Empleados ON Citas.idEmpleados = Empleados.idEmpleados
+            LEFT JOIN Estilos ON Citas.idEstilos = Estilos.idEstilos
+            LEFT JOIN Promociones ON Citas.idPromociones = Promociones.idPromociones
         `);
         res.json(rows);
     } catch (error) {

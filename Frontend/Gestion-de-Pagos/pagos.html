@@ -19,11 +19,9 @@
 
     <!-- idCitas INTEGER NOT NULL -->
     <label>ID Cita <span style="color:#e74c3c">*</span></label>
-    <input type="number" id="pago_cita"
-           min="1" max="9999999"
-           step="1"
-           required
-           placeholder="Número de ID de la cita">
+    <select id="pago_cita_select" onchange="alSeleccionarCitaParaPago()" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; background-color: #f9f9f9; color: #333; margin-bottom: 15px; font-size: 14px;" required>
+        <option value="">Cargando citas...</option>
+    </select>
 
     <!-- monto REAL NOT NULL -->
     <label>Monto ($) <span style="color:#e74c3c">*</span></label>
@@ -44,7 +42,51 @@
     <div class="actions">
         <button onclick="guardarPago()">Registrar Pago</button>
     </div>
+
+    <!-- TABLA DE PAGOS -->
+    <h3 style="margin-top: 30px; border-bottom: 1px solid #444; padding-bottom: 10px;">Lista de Pagos Registrados</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;" id="tabla_pagos">
+        <thead>
+            <tr style="background-color: #333;">
+                <th style="padding: 10px; border: 1px solid #555;">ID Pago</th>
+                <th style="padding: 10px; border: 1px solid #555;">ID Cita</th>
+                <th style="padding: 10px; border: 1px solid #555;">Monto ($)</th>
+                <th style="padding: 10px; border: 1px solid #555;">Método</th>
+                <th style="padding: 10px; border: 1px solid #555;">Fecha</th>
+                <th style="padding: 10px; border: 1px solid #555;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_pagos_body">
+            <!-- Las filas se cargarán aquí -->
+        </tbody>
+    </table>
 </section>
+
+<!-- Modal Editar Pago -->
+<div id="modalEditarPago" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#222; padding:20px; border-radius:8px; width:90%; max-width:400px; color: white;">
+        <h3 style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px;">Editar Pago #<span id="edit_pago_id_display"></span></h3>
+        <input type="hidden" id="edit_pago_id">
+        
+        <label style="display:block; margin-top:10px;">Monto ($)</label>
+        <input type="number" id="edit_pago_monto" step="0.01" style="width:100%; padding:8px; margin-top:5px; background:#333; color:white; border:1px solid #555;" required>
+        
+        <label style="display:block; margin-top:10px;">Método de Pago</label>
+        <select id="edit_pago_metodo" style="width:100%; padding:8px; margin-top:5px; background:#333; color:white; border:1px solid #555;">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta">Tarjeta</option>
+            <option value="Transferencia">Transferencia</option>
+        </select>
+        
+        <label style="display:block; margin-top:10px;">Fecha</label>
+        <input type="date" id="edit_pago_fecha" style="width:100%; padding:8px; margin-top:5px; background:#333; color:white; border:1px solid #555;" required>
+        
+        <div class="actions" style="margin-top: 20px; display:flex; gap:10px;">
+            <button onclick="actualizarPago()" style="flex:1;">Actualizar</button>
+            <button onclick="document.getElementById('modalEditarPago').style.display='none'" style="flex:1; background:#555;">Cancelar</button>
+        </div>
+    </div>
+</div>
 <script src="../js/script.js"></script>
 </body>
 </html>

@@ -19,7 +19,7 @@
 
     <!-- idCitas INTEGER NOT NULL — select dinámico -->
     <label>Cita <span style="color:#e74c3c">*</span></label>
-    <select id="pago_cita_select" required>
+    <select id="pago_cita_select" onchange="alSeleccionarCitaParaPago()" required>
         <option value="">Cargando citas...</option>
     </select>
 

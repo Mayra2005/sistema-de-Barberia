@@ -17,8 +17,16 @@
 <section class="active">
     <h2>Copia de Seguridad</h2>
 
-    <div class="actions">
-        <button onclick="alert('Respaldo realizado')">Ejecutar Respaldo</button>
+    <label style="margin-top: 20px; display:block;">Frecuencia del Respaldo:</label>
+    <select id="tipo_respaldo" style="width: 100%; max-width: 400px; padding: 10px; margin-top: 5px;">
+        <option value="todo">Historial Completo</option>
+        <option value="mensual">Mensual (Mes Actual)</option>
+        <option value="semanal">Semanal (Últimos 7 días)</option>
+        <option value="diario">Diario (Hoy)</option>
+    </select>
+
+    <div class="actions" style="margin-top: 20px;">
+        <button onclick="ejecutarRespaldo()">Generar Respaldo en PDF</button>
     </div>
 </section>
 <script src="../js/script.js"></script>

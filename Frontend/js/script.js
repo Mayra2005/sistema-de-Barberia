@@ -1,6 +1,46 @@
 const API_URL = "http://localhost:3000/api";
 
 // ==============================
+// EL PLUS: ALERTAS PREMIUM (SweetAlert2)
+// ==============================
+const swalScript = document.createElement('script');
+swalScript.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+document.head.appendChild(swalScript);
+
+const styleSwal = document.createElement('style');
+styleSwal.innerHTML = `
+    .swal2-popup { border: 1px solid rgba(212, 175, 55, 0.3) !important; box-shadow: 0 0 30px rgba(0,0,0,0.8) !important; }
+`;
+document.head.appendChild(styleSwal);
+
+// Override native alert for a premium look
+const originalAlert = window.alert;
+window.alert = function(message) {
+    if (typeof Swal !== 'undefined') {
+        let iconType = 'info';
+        let cleanMsg = message;
+        if (message.includes('❌') || message.includes('Error')) {
+            iconType = 'error';
+            cleanMsg = message.replace('❌', '').trim();
+        } else if (message.includes('✅') || message.includes('exitosamente')) {
+            iconType = 'success';
+            cleanMsg = message.replace('✅', '').trim();
+        }
+
+        Swal.fire({
+            text: cleanMsg,
+            icon: iconType,
+            background: 'rgba(20, 20, 20, 0.95)',
+            color: '#fff',
+            confirmButtonColor: '#d4af37',
+            backdrop: 'rgba(0,0,0,0.6)'
+        });
+    } else {
+        originalAlert(message);
+    }
+};
+
+// ==============================
 // LOGIN
 // ==============================
 async function login() {
@@ -1009,6 +1049,54 @@ async function eliminarEstilo(id) {
         cargarTablaEstilos();
     } else {
         alert("❌ Error al eliminar estilo: " + (res?.data?.error || ""));
+    }
+}
+
+// ==============================
+// COPIA DE SEGURIDAD (RESPALDO PDF)
+// ==============================
+async function ejecutarRespaldo() {
+    const tipo = document.getElementById('tipo_respaldo')?.value || 'todo';
+    
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Generando Respaldo...',
+            text: 'Por favor espera mientras se genera el PDF...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }
+    
+    const res = await fetchAPI('/respaldo', 'POST', { tipo });
+    
+    if (res && res.ok) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Respaldo Exitoso',
+                text: res.data.message || 'PDF guardado en el Escritorio',
+                background: 'rgba(20, 20, 20, 0.95)',
+                color: '#fff',
+                confirmButtonColor: '#d4af37'
+            });
+        } else {
+            alert("✅ " + (res.data.message || "Respaldo generado en el Escritorio"));
+        }
+    } else {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: res?.data?.error || "Error al generar el respaldo",
+                background: 'rgba(20, 20, 20, 0.95)',
+                color: '#fff',
+                confirmButtonColor: '#d4af37'
+            });
+        } else {
+            alert("❌ " + (res?.data?.error || "Error al generar el respaldo"));
+        }
     }
 }
 

@@ -24,6 +24,7 @@ app.use('/api/citas',      require('./Agendar-Cita/citas.js'));
 app.use('/api/pagos',      require('./Gestion-de-Pagos/pagos.js'));
 app.use('/api/promociones',require('./Gestion-de-Promociones/promociones.js'));
 app.use('/api/estilos',    require('./Gestion-de-Estilos/estilos.js'));
+app.use('/api/respaldo',   require('./Copia-de-Seguridad/respaldo.js'));
 
 // 🚀 INICIAR SERVIDOR
 const PORT = process.env.PORT || 3000;

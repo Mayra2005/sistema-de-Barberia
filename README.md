@@ -5,7 +5,8 @@
 **Integrantes:**
 - Mayra Azenet Ferrer Ramos
 - Alondra Yazmin Galvan Zuñiga
-- Xavier Israel Sucedo Castillo
+- Lourdes Sofía Star de la rosa
+- Alejandro Ramos Coyotecatl
 
 
 Descripción

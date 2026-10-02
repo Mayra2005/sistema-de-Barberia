@@ -14,6 +14,8 @@ router.get('/', verificarToken, async (req, res) => {
             LEFT JOIN Empleados ON Citas.idEmpleados = Empleados.idEmpleados
             LEFT JOIN Estilos ON Citas.idEstilos = Estilos.idEstilos
             LEFT JOIN Promociones ON Citas.idPromociones = Promociones.idPromociones
+            WHERE Citas.fecha >= DATE('now')
+            ORDER BY Citas.fecha ASC, Citas.hora ASC
         `);
         res.json(rows);
     } catch (error) {

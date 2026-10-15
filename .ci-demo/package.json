@@ -1,0 +1,8 @@
+{
+    "name": "pruebas-ci-barberia",
+    "version": "1.0.0",
+    "description": "Pruebas unitarias para la barberia Super Bee",
+    "scripts": {
+        "test": "node --test"
+    }
+}

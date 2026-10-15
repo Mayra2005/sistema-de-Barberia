@@ -1,0 +1,24 @@
+
+name: CI Barberia Super Bee
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pruebas-unitarias:
+    name: Ejecutar pruebas unitarias
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar codigo del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Ejecutar pruebas
+        working-directory: .ci-demo
+        run: npm test
